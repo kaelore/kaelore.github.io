@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homelab</title>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<iframe id="app" title="Homelab"></iframe>
+
+<script>
+async function loadTunnel() {
+    try {
+        const response = await fetch('./config.json?t=' + Date.now());
+        const config = await response.json();
+
+        if (!config.url) {
+            return;
+        }
+
+        const iframe = document.getElementById('app');
+
+        if (iframe.src !== config.url) {
+            iframe.src = config.url;
+        }
+
+    } catch (error) {
+        console.error('Impossibile recuperare il tunnel:', error);
+    }
+}
+
+loadTunnel();
+setInterval(loadTunnel, 30000);
+</script>
+
+</body>
+</html>
