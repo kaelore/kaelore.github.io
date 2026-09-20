@@ -8,48 +8,50 @@
     <style>
         html, body {
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
             background: #111;
+            color: #ccc;
+            font-family: system-ui, sans-serif;
+            display: grid;
+            place-items: center;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
         }
     </style>
 </head>
 
 <body>
 
-<iframe id="app" title="kaelore"></iframe>
+<p id="status">Connessione in corso…</p>
 
 <script>
 async function loadTunnel() {
+    const status = document.getElementById('status');
+
     try {
         const response = await fetch('./config.json?t=' + Date.now());
         const config = await response.json();
 
         if (!config.url) {
+            status.textContent = 'Tunnel non ancora disponibile. Riprovo…';
             return;
         }
 
-        const iframe = document.getElementById('app');
-
-        if (iframe.src !== config.url) {
-            iframe.src = config.url;
-        }
+        // Redirect di prima parte: login/cookie funzionano sul tunnel
+        location.replace(config.url);
 
     } catch (error) {
         console.error('Impossibile recuperare il tunnel:', error);
+        status.textContent = 'Errore nel recuperare il tunnel. Riprovo…';
     }
 }
 
 loadTunnel();
-setInterval(loadTunnel, 30000);
+setInterval(loadTunnel, 5000);
 </script>
 
 </body>
